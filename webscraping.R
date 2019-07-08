@@ -1,15 +1,15 @@
-# Webscaping de Noticias financieras de Reuters ------------------------------------
+# Webscaping de Noticias financieras de Reuters --------------------------------------
 
     # Autor: Johan Rosa
     # fecha: julio 2019
 
-# Paquetes -------------------------------------------------------------------------
+# Paquetes ---------------------------------------------------------------------------
 library(tidyverse) # visualización y transformación de datos
 library(XML)       # Descargar y manejar archivos html y xml
 library(rvest)     # Extraer información de un xml
 library(rebus)     # Expresiones regulares
 
-# Preparativos ---------------------------------------------------------------------
+# Preparativos -----------------------------------------------------------------------
 
 # Definiendo una función que extraiga el url de cada noticia en las páginas generales
 
@@ -47,15 +47,14 @@ get.news.text <-function(url){
     news
 }
 
+# Descargando las noticias de Markets -------------------------------------------------
 
-# Url de las páginas principales
+# Url de las páginas principales de markets
 paginaweb_general_markets <- paste0(
     "https://www.reuters.com/news/archive/",
     "marketsNews?view=page&page=",
     2701:3000, # esta parte del cóndigo se puede cambiar
     "&pageSize=10")
-
-
 
 # Extrayendo los url de las noticias individuales.
 # Por temas de conexión no se hizo todo de una vez, se fue cambiando
@@ -93,6 +92,36 @@ markets_news <- bind_rows(markets_news, noticias_markets_temp)
 
 bind_rows(noticias_markets) %>%
     View()
+
+# Descargando las noticias de business -------------------------------------------------
+
+# Url de las páginas principales de business
+paginaweb_general_business <- paste0(
+    "https://www.reuters.com/news/archive/",
+    "businessNews?view=page&page=",
+    1:3400, # esta parte del cóndigo se puede cambiar
+    "&pageSize=10")
+
+# Extrayendo los url de las noticias individuales.
+# Por temas de conexión no se hizo todo de una vez, se fue cambiando
+# el rango en el block de codigos anterior y se fue combinando
+
+business_news_urls_temp <- list()
+
+for(i in 1:length(paginaweb_general_business) {
+    business_news_urls_temp[1] <- map(paginaweb_general_business, get.news.url)
+}
+
+business_news_url <- unlist(business_news_urls_tem) %>%
+    unique()
+
+# Archivo final
+#markets_news_urls <- c(markets_news_urls, markets_news_urls_temp)
+
+# Algunas noticias se duplicaban
+#markets_news_urls <-  markets_news_urls %>%
+#    unique()
+
 
 
 #save.image("webscraping_ws")
