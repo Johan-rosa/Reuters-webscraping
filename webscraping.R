@@ -23,7 +23,7 @@ get.news.url <- function(url) {
     
 }
 
-#  Funcion para extraer la fecha y el cuerpo de la noticia
+#  Función para extraer la fecha y el cuerpo de la noticia
 get.news.text <-function(url){
     news_html <- read_html(url)
     
@@ -42,18 +42,19 @@ get.news.text <-function(url){
     news <- cbind(date, text) %>%
         as.data.frame()
     
-    Sys.sleep(5)
+    #Sys.sleep(5)
     
     news
 }
 
-# Descargando las noticias de Markets -------------------------------------------------
+# Descargando las noticias de Markets ------------------------------------------------
 
 # Url de las páginas principales de markets
+
 paginaweb_general_markets <- paste0(
     "https://www.reuters.com/news/archive/",
     "marketsNews?view=page&page=",
-    2701:3000, # esta parte del cóndigo se puede cambiar
+    1:3000, # esta parte del cóndigo se puede cambiar
     "&pageSize=10")
 
 # Extrayendo los url de las noticias individuales.
@@ -73,25 +74,22 @@ markets_news_urls <-  markets_news_urls %>%
 # Guardando un objeto con los urls individuales
 saveRDS(markets_news_urls, "markets_news_url")
 
-# Descargando el texto de las noticias ---------------------------------------------
+# Descargando el texto de las noticias de  markets -----------------------------------
 
 
 noticias_markets_temp <- list()
     
-for(i in seq_along(markets_news_urls)) {
+for(i in 35731:length(markets_news_urls)) {
 
    noticias_markets_temp[[i]] <- get.news.text(markets_news_urls[i])
-        
+   print(i)
 }
 
-map(markets_news_urls[101:500], get.news.text) %>%
-    bind_rows()
 
+markets_news <- bind_rows(market_news, bind_rows(noticias_markets_temp))
 
-markets_news <- bind_rows(markets_news, noticias_markets_temp)
-
-bind_rows(noticias_markets) %>%
-    View()
+#bind_rows(noticias_markets_temp) %>%
+#    View()
 
 # Descargando las noticias de business -------------------------------------------------
 
@@ -108,21 +106,34 @@ paginaweb_general_business <- paste0(
 
 business_news_urls_temp <- list()
 
-for(i in 1:length(paginaweb_general_business) {
-    business_news_urls_temp[1] <- map(paginaweb_general_business, get.news.url)
+for(i in 1:length(paginaweb_general_business)) {
+    
+    business_news_urls_temp[i] <- get.news.url(paginaweb_general_business[i]) %>%
+        list()
+    print(i)
+        #map(paginaweb_general_business, get.news.url)
 }
 
-business_news_url <- unlist(business_news_urls_tem) %>%
+
+business_news_url <- unlist(business_news_urls_temp) %>%
     unique()
 
-# Archivo final
-#markets_news_urls <- c(markets_news_urls, markets_news_urls_temp)
-
-# Algunas noticias se duplicaban
-#markets_news_urls <-  markets_news_urls %>%
-#    unique()
+# Descargando el texto de las noticias de  markets -----------------------------------
 
 
+noticias_business_temp <- list()
 
-#save.image("webscraping_ws")
+for(i in 1:length(business_news_url)) {
+    
+    noticias_business_temp[[i]] <- get.news.text(business_news_url[i])
+    print(i)
+}
+
+
+business_news <- bind_rows(noticias_business_temp)
+
+
+
+
+save.image("webscraping_ws")
 
